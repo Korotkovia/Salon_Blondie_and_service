@@ -161,81 +161,59 @@ def choose_master(bot, update, user_data):
                            reply_markup=reply_markup)
     elif service in all_services_2:
         keyboard = []
-        arrows = []
         row = [InlineKeyboardButton((all_info_2[0][0]), callback_data='Вова')]
-        ar_1 = InlineKeyboardButton('<', callback_data='serg')
-        arrows.append(ar_1)
-        ar_2 = InlineKeyboardButton('>', callback_data='dima')
-        arrows.append(ar_2)
-        keyboard.extend((row, arrows))
+        row_1 = [InlineKeyboardButton('<', callback_data='serg'),
+                 InlineKeyboardButton('>', callback_data='dima')]
+        keyboard.extend((row, row_1))
         reply_markup = InlineKeyboardMarkup(keyboard)
         bot.send_photo(chat_id=query.from_user.id,
                        photo=all_info_2[0][1],
-                       caption='*Мастер:* {} \n'
-                               '*Опыт работы:* {} \n'
-                               '*Рейтинг:* {}'.format(all_info_2[0][0], all_info_2[0][2], smiles[12]),
+                       caption='*Опыт работы:* {} \n'
+                               '*Рейтинг:* {}'.format(all_info_2[0][2], smiles[12]),
                        parse_mode="Markdown",
                        reply_markup=reply_markup)
-        bot.delete_message(chat_id=query.from_user.id,
-                           message_id=query.message.message_id)
         user_data['service'] = query.data
     elif service == 'dima':
         keyboard = []
-        arrows = []
         row = [InlineKeyboardButton((all_info_2[1][0]), callback_data='Дима')]
-        ar_1 = InlineKeyboardButton('<', callback_data='vova')
-        arrows.append(ar_1)
-        ar_2 = InlineKeyboardButton('>', callback_data='serg')
-        arrows.append(ar_2)
-        keyboard.extend((row, arrows))
+        row_1 = [InlineKeyboardButton('<', callback_data='vova'),
+                 InlineKeyboardButton('>', callback_data='serg')]
+        keyboard.extend((row, row_1))
         reply_markup = InlineKeyboardMarkup(keyboard)
         bot.send_photo(chat_id=query.from_user.id,
                        photo=all_info_2[1][1],
-                       caption='*Мастер:* {} \n'
-                               '*Опыт работы:* {} \n'
-                               '*Рейтинг:* {}'.format(all_info_2[1][0], all_info_2[1][2], smiles[12]),
+                       caption='*Опыт работы:* {} \n'
+                               '*Рейтинг:* {}'.format(all_info_2[1][2], smiles[12]),
                        parse_mode="Markdown",
                        reply_markup=reply_markup)
-        bot.delete_message(chat_id=query.from_user.id,
-                           message_id=query.message.message_id)
     elif service == 'serg':
         keyboard = []
-        arrows = []
         row = [InlineKeyboardButton((all_info_2[2][0]), callback_data='Сергей')]
-        ar_1 = InlineKeyboardButton('<', callback_data='dima')
-        arrows.append(ar_1)
-        ar_2 = InlineKeyboardButton('>', callback_data='vova')
-        arrows.append(ar_2)
-        keyboard.extend((row, arrows))
+        row_1 = [InlineKeyboardButton('<', callback_data='dima'),
+                 InlineKeyboardButton('>', callback_data='vova')]
+        keyboard.extend((row, row_1))
         reply_markup = InlineKeyboardMarkup(keyboard)
         bot.send_photo(chat_id=query.from_user.id,
                        photo=all_info_2[2][1],
-                       caption='*Мастер:* {} \n'
-                               '*Опыт работы:* {} \n'
-                               '*Рейтинг:* {}'.format(all_info_2[2][0], all_info_2[2][2], smiles[12]),
+                       caption='*Опыт работы:* {} \n'
+                               '*Рейтинг:* {}'.format(all_info_2[2][2], smiles[12]),
                        parse_mode="Markdown",
                        reply_markup=reply_markup)
-        bot.delete_message(chat_id=query.from_user.id,
-                           message_id=query.message.message_id)
     elif service == 'vova':
         keyboard = []
-        arrows = []
         row = [InlineKeyboardButton((all_info_2[0][0]), callback_data='Вова')]
-        ar_1 = InlineKeyboardButton('<', callback_data='serg')
-        arrows.append(ar_1)
-        ar_2 = InlineKeyboardButton('>', callback_data='dima')
-        arrows.append(ar_2)
-        keyboard.extend((row, arrows))
+        row_1 = [InlineKeyboardButton('<', callback_data='serg'),
+                 InlineKeyboardButton('>', callback_data='dima')]
+        keyboard.extend((row, row_1))
         reply_markup = InlineKeyboardMarkup(keyboard)
         bot.send_photo(chat_id=query.from_user.id,
                        photo=all_info_2[0][1],
-                       caption='*Мастер:* {} \n'
-                               '*Опыт работы:* {} \n'
-                               '*Рейтинг:* {}'.format(all_info_2[0][0], all_info_2[0][2], smiles[12]),
+                       caption='*Опыт работы:* {} \n'
+                               '*Рейтинг:* {}'.format(all_info_2[0][2], smiles[12]),
                        parse_mode="Markdown",
                        reply_markup=reply_markup)
-        bot.delete_message(chat_id=query.from_user.id,
-                           message_id=query.message.message_id)
+    bot.delete_message(chat_id=query.from_user.id,
+                       message_id=query.message.message_id)
     return SECOND
 
 
