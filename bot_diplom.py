@@ -159,6 +159,7 @@ def choose_master(bot, update, user_data):
                                    '*Рейтинг:* {}'.format(i[0], i[2], smiles[12]),
                            parse_mode="Markdown",
                            reply_markup=reply_markup)
+        user_data['service'] = query.data
     elif service in all_services_2:
         keyboard = []
         row = [InlineKeyboardButton((all_info_2[0][0]), callback_data='Вова')]
@@ -263,6 +264,7 @@ def calendar(bot, update, user_data):
                          message_id=query.message.message_id,
                          reply_markup=telegramcalendar.create_calendar())
     user_data['name'] = query.data
+    print(user_data)
     return THIRD
 
 
@@ -308,6 +310,7 @@ def time_check(bot, update, user_data):
                               message_id=query.message.message_id,
                               reply_markup=reply_markup)
     user_data['date'] = date.strftime("%Y-%m-%d")
+    print(user_data)
     return FOURTH
 
 
@@ -352,6 +355,7 @@ def contact(bot, update, user_data):
         bot.delete_message(chat_id=update.callback_query.from_user.id,
                            message_id=query.message.message_id)
         user_data['time'] = query.data
+        print(user_data)
 
 
 def get_contact(bot, update, user_data, job_queue):
