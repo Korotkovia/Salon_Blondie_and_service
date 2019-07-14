@@ -423,5 +423,3 @@ def process_calendar_selection_serg(bot, update):
 
 
 '''сделать 4 функции telegramm create calendar, в кажджой будет лежать свой список'''
-
-
