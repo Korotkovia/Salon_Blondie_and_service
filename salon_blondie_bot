@@ -214,6 +214,7 @@ def choose_master(bot, update, user_data):
                        reply_markup=reply_markup)
     bot.delete_message(chat_id=query.from_user.id,
                        message_id=query.message.message_id)
+    print(query.data)
     return SECOND
 
 
@@ -243,27 +244,19 @@ def calendar(bot, update, user_data):
                          chat_id=query.from_user.id,
                          message_id=query.message.message_id,
                          reply_markup=telegramcalendar.create_calendar_serg())
-    elif name == 'vova':
-        bot.edit_message_reply_markup(chat_id=query.message.chat_id,
-                                      message_id=query.message.message_id,
-                                      reply_markup=choose_master(bot, update, user_data))
-    elif name == 'dima':
-        bot.edit_message_reply_markup(chat_id=query.message.chat_id,
-                                      message_id=query.message.message_id,
-                                      reply_markup=choose_master(bot, update, user_data))
-    elif name == 'serg':
-        bot.edit_message_reply_markup(chat_id=query.message.chat_id,
-                                      message_id=query.message.message_id,
-                                      reply_markup=choose_master(bot, update, user_data))
-    else:
+    elif name == 'Тимур':
         bot.delete_message(chat_id=query.from_user.id,
                            message_id=query.message.message_id)
         bot.send_message(text='Выберите дату: {}'.format(smiles[4]),
                          chat_id=query.from_user.id,
                          message_id=query.message.message_id,
                          reply_markup=telegramcalendar.create_calendar())
+    elif name == 'vova' or 'dima' or 'serg':
+        bot.edit_message_reply_markup(chat_id=query.message.chat_id,
+                                      message_id=query.message.message_id,
+                                      reply_markup=choose_master(bot, update, user_data))
     user_data['name'] = query.data
-    print(user_data)
+    print(query.data)
     return THIRD
 
 
@@ -304,12 +297,12 @@ def time_check(bot, update, user_data):
         keyboard.append(row)
 
         reply_markup = InlineKeyboardMarkup(keyboard)
-        bot.edit_message_text(text='Выберите время: {}'.format(smiles[6]),
-                              chat_id=update.callback_query.from_user.id,
+        bot.edit_message_text(text='Выберите время: {}'.format(smiles[7]),
+                              chat_id=query.from_user.id,
                               message_id=query.message.message_id,
                               reply_markup=reply_markup)
     user_data['date'] = date.strftime("%Y-%m-%d")
-    print(user_data)
+    print(query.data)
     return FOURTH
 
 
@@ -348,13 +341,12 @@ def contact(bot, update, user_data):
         my_keyboard = ReplyKeyboardMarkup([[contact_button]],
                                           resize_keyboard=True,
                                           one_time_keyboard=True)
-        bot.send_message(chat_id=update.callback_query.from_user.id,
+        bot.send_message(chat_id=query.from_user.id,
                          text="Отправьте Ваши контактные данные для уточнения заказа:",
                          reply_markup=my_keyboard)
-        bot.delete_message(chat_id=update.callback_query.from_user.id,
+        bot.delete_message(chat_id=query.from_user.id,
                            message_id=query.message.message_id)
         user_data['time'] = query.data
-        print(user_data)
 
 
 def get_contact(bot, update, user_data, job_queue):
@@ -473,39 +465,27 @@ def my_entry(bot, update, user_data):
 
         total_sum = sum(check_price[0:])
         keyboard = []
+        row = [InlineKeyboardButton((', '.join(entries[0:4])), callback_data='1')]
+        row_1 = [InlineKeyboardButton((', '.join(entries[4:8])), callback_data='2')]
+        row_2 = [InlineKeyboardButton((', '.join(entries[8:12])), callback_data='3')]
+        all_entries = [InlineKeyboardButton('Отменить все записи {}'.format(smiles[3]), callback_data='Отмена')]
+        main_menu = [InlineKeyboardButton('Вернуться в главное меню {}'.format(smiles[10]), callback_data='0')]
         if len(entries) == 4:
-            row = [InlineKeyboardButton((', '.join(entries[0:4])), callback_data='1')]
-            main_menu = [InlineKeyboardButton('Вернуться в главное меню {}'.format(smiles[10]), callback_data='0')]
             keyboard.extend((row, main_menu))
         elif len(entries) == 8:
-            row = [InlineKeyboardButton((', '.join(entries[0:4])), callback_data='1')]
-            row_1 = [InlineKeyboardButton((', '.join(entries[4:8])), callback_data='2')]
-            all_entries = [InlineKeyboardButton('Отменить все записи {}'.format(smiles[3]), callback_data='Отмена')]
-            main_menu = [InlineKeyboardButton('Вернуться в главное меню {}'.format(smiles[10]), callback_data='0')]
             keyboard.extend((row, row_1, all_entries, main_menu))
         elif len(entries) > 8:
-            row = [InlineKeyboardButton((', '.join(entries[0:4])), callback_data='1')]
-            row_1 = [InlineKeyboardButton((', '.join(entries[4:8])), callback_data='2')]
-            row_2 = [InlineKeyboardButton((', '.join(entries[8:12])), callback_data='3')]
-            all_entries = [InlineKeyboardButton('Отменить все записи {}'.format(smiles[3]), callback_data='Отмена')]
-            main_menu = [InlineKeyboardButton('Вернуться в главное меню {}'.format(smiles[10]), callback_data='0')]
             keyboard.extend((row, row_1, row_2, all_entries, main_menu))
         reply_markup = InlineKeyboardMarkup(keyboard)
+        info_text = 'Клиент: ' + user_data.get('first_name') + '\n'\
+                    + '\n' 'Итоговая сумма: ' + str(total_sum) + '\n'\
+                    + '\n' 'Ниже представлена краткая информация о ваших записях.' + '\n'\
+                    'Чтобы отменить запись -  просто нажмите на нее!'
         try:
-            update.message.reply_text('Клиент: ' + user_data.get('first_name') + '\n'
-                                      + '\n'
-                                      'Итоговая сумма: ' + str(total_sum) + '\n'
-                                      + '\n'
-                                      'Ниже представлена краткая информация о ваших записях.' + '\n'
-                                      'Чтобы отменить запись -  просто нажмите на нее!',
+            update.message.reply_text(info_text,
                                       reply_markup=reply_markup)
         except AttributeError:
-            bot.edit_message_text('Клиент: ' + user_data.get('first_name') + '\n'
-                                  + '\n'
-                                  'Итоговая сумма: ' + str(total_sum) + '\n'
-                                  + '\n'
-                                  'Ниже представлена краткая информация о ваших записях.' + '\n'
-                                  'Чтобы отменить запись -  просто нажмите на нее!',
+            bot.edit_message_text(info_text,
                                   chat_id=update.callback_query.message.chat_id,
                                   message_id=update.callback_query.message.message_id,
                                   reply_markup=reply_markup)
