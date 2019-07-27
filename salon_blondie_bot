@@ -214,49 +214,28 @@ def choose_master(bot, update, user_data):
                        reply_markup=reply_markup)
     bot.delete_message(chat_id=query.from_user.id,
                        message_id=query.message.message_id)
-    print(query.data)
     return SECOND
 
 
 def calendar(bot, update, user_data):
     """ Вызов инлайн клавиатуры с календарем """
+    print('lol')
 
     query = update.callback_query
     name = query.data
-    if name == 'Вова':
-        bot.delete_message(chat_id=query.from_user.id,
-                           message_id=query.message.message_id)
-        bot.send_message(text='Выберите дату: {}'.format(smiles[4]),
-                         chat_id=query.from_user.id,
-                         message_id=query.message.message_id,
-                         reply_markup=telegramcalendar.create_calendar_vova())
-    elif name == 'Дима':
-        bot.delete_message(chat_id=query.from_user.id,
-                           message_id=query.message.message_id)
-        bot.send_message(text='Выберите дату: {}'.format(smiles[4]),
-                         chat_id=query.from_user.id,
-                         message_id=query.message.message_id,
-                         reply_markup=telegramcalendar.create_calendar_dima())
-    elif name == 'Сергей':
-        bot.delete_message(chat_id=query.from_user.id,
-                           message_id=query.message.message_id)
-        bot.send_message(text='Выберите дату: {}'.format(smiles[4]),
-                         chat_id=query.from_user.id,
-                         message_id=query.message.message_id,
-                         reply_markup=telegramcalendar.create_calendar_serg())
-    elif name == 'Тимур':
-        bot.delete_message(chat_id=query.from_user.id,
-                           message_id=query.message.message_id)
-        bot.send_message(text='Выберите дату: {}'.format(smiles[4]),
-                         chat_id=query.from_user.id,
-                         message_id=query.message.message_id,
-                         reply_markup=telegramcalendar.create_calendar())
-    elif name == 'vova' or 'dima' or 'serg':
+    if name == 'vova' or name == 'dima' or name == 'serg':
         bot.edit_message_reply_markup(chat_id=query.message.chat_id,
                                       message_id=query.message.message_id,
                                       reply_markup=choose_master(bot, update, user_data))
+    else:
+        bot.delete_message(chat_id=query.from_user.id,
+                           message_id=query.message.message_id)
+        bot.send_message(text='Выберите дату: {}'.format(smiles[4]),
+                         chat_id=query.from_user.id,
+                         message_id=query.message.message_id,
+                         reply_markup=telegramcalendar.create_calendar(bot, update))
+
     user_data['name'] = query.data
-    print(query.data)
     return THIRD
 
 
@@ -264,14 +243,7 @@ def time_check(bot, update, user_data):
     """ Вывод инлайн клавиатуры со временем """
 
     query = update.callback_query
-    if user_data['name'] == 'Вова':
-        selected, date = telegramcalendar.process_calendar_selection_vova(bot, update)
-    elif user_data['name'] == 'Дима':
-        selected, date = telegramcalendar.process_calendar_selection_dima(bot, update)
-    elif user_data['name'] == 'Сергей':
-        selected, date = telegramcalendar.process_calendar_selection_serg(bot, update)
-    else:
-        selected, date = telegramcalendar.process_calendar_selection(bot, update)
+    selected, date = telegramcalendar.process_calendar_selection(bot, update)
 
     sql = "SELECT * FROM time_to_barbers"
     cursor.execute(sql)
@@ -293,16 +265,25 @@ def time_check(bot, update, user_data):
         keyboard.append(row)
         row = [InlineKeyboardButton(i, callback_data=str(i)) for i in all_time[3:6]]
         keyboard.append(row)
-        row = [InlineKeyboardButton('Выбрать другой день', callback_data='Выбрать другой день')]
-        keyboard.append(row)
-
+        if user_data['name'] == 'Вова':
+            row = [InlineKeyboardButton('Выбрать другой день', callback_data='Выбрать другой день Вова')]
+            keyboard.append(row)
+        elif user_data['name'] == 'Дима':
+            row = [InlineKeyboardButton('Выбрать другой день', callback_data='Выбрать другой день Дима')]
+            keyboard.append(row)
+        elif user_data['name'] == 'Сергей':
+            row = [InlineKeyboardButton('Выбрать другой день', callback_data='Выбрать другой день Сергей')]
+            keyboard.append(row)
+        elif user_data['name'] == 'Тимур':
+            row = [InlineKeyboardButton('Выбрать другой день', callback_data='Выбрать другой день Тимур')]
+            keyboard.append(row)
         reply_markup = InlineKeyboardMarkup(keyboard)
         bot.edit_message_text(text='Выберите время: {}'.format(smiles[7]),
                               chat_id=query.from_user.id,
                               message_id=query.message.message_id,
                               reply_markup=reply_markup)
     user_data['date'] = date.strftime("%Y-%m-%d")
-    print(query.data)
+    print(user_data)
     return FOURTH
 
 
@@ -312,29 +293,14 @@ def contact(bot, update, user_data):
     query = update.callback_query
     if query.data == "Нет записи":
         bot.answer_callback_query(callback_query_id=query.id)
-    elif query.data == 'Выбрать другой день' and user_data['name'] == 'Вова':
+    elif query.data == 'Выбрать другой день Вова' or\
+            query.data == 'Выбрать другой день Дима' or\
+            query.data == 'Выбрать другой день Сергей' or\
+            query.data == 'Выбрать другой день Тимур':
         bot.edit_message_text(text='Выберите дату: {} '.format(smiles[4]),
                               chat_id=query.message.chat_id,
                               message_id=query.message.message_id,
-                              reply_markup=telegramcalendar.create_calendar_vova())
-        return THIRD
-    elif query.data == 'Выбрать другой день' and user_data['name'] == 'Дима':
-        bot.edit_message_text(text='Выберите дату: {} '.format(smiles[4]),
-                              chat_id=query.message.chat_id,
-                              message_id=query.message.message_id,
-                              reply_markup=telegramcalendar.create_calendar_dima())
-        return THIRD
-    elif query.data == 'Выбрать другой день' and user_data['name'] == 'Сергей':
-        bot.edit_message_text(text='Выберите дату: {} '.format(smiles[4]),
-                              chat_id=query.message.chat_id,
-                              message_id=query.message.message_id,
-                              reply_markup=telegramcalendar.create_calendar_serg())
-        return THIRD
-    elif query.data == 'Выбрать другой день':
-        bot.edit_message_text(text='Выберите дату: {} '.format(smiles[4]),
-                              chat_id=query.message.chat_id,
-                              message_id=query.message.message_id,
-                              reply_markup=telegramcalendar.create_calendar())
+                              reply_markup=telegramcalendar.create_calendar(bot, update))
         return THIRD
     else:
         contact_button = KeyboardButton('Контактные данные {}'.format(smiles[11]), request_contact=True)
@@ -347,6 +313,7 @@ def contact(bot, update, user_data):
         bot.delete_message(chat_id=query.from_user.id,
                            message_id=query.message.message_id)
         user_data['time'] = query.data
+        print(user_data)
 
 
 def get_contact(bot, update, user_data, job_queue):
