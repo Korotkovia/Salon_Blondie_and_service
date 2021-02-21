@@ -1,4 +1,3 @@
-from __future__ import print_function
 from emoji import emojize
 from telegram import InlineKeyboardButton, InlineKeyboardMarkup, KeyboardButton, ReplyKeyboardMarkup
 from telegram.ext import Updater, CommandHandler, CallbackQueryHandler, ConversationHandler, MessageHandler, Filters, \
@@ -152,64 +151,90 @@ def choose_master(bot, update, user_data):
             row = [InlineKeyboardButton(i[0], callback_data=str(i[0]))]
             list_1 = [row]
             reply_markup = InlineKeyboardMarkup(list_1)
-            bot.send_photo(chat_id=update.callback_query.from_user.id,
+            bot.send_photo(chat_id=query.from_user.id,
                            photo=i[1],
                            caption='*Мастер:* {} \n'
                                    '*Опыт работы:* {} \n'
                                    '*Рейтинг:* {}'.format(i[0], i[2], smiles[12]),
                            parse_mode="Markdown",
                            reply_markup=reply_markup)
+        user_data['service'] = query.data
     elif service in all_services_2:
-        for i in all_info_2:
-            row = [InlineKeyboardButton(i[0], callback_data=str(i[0]))]
-            list_1 = [row]
-            reply_markup = InlineKeyboardMarkup(list_1)
-            bot.send_photo(chat_id=update.callback_query.from_user.id,
-                           photo=i[1],
-                           caption='*Мастер:* {} \n'
-                                   '*Опыт работы:* {} \n'
-                                   '*Рейтинг:* {}'.format(i[0], i[2], smiles[12]),
-                           parse_mode="Markdown",
-                           reply_markup=reply_markup)
-    bot.delete_message(chat_id=update.callback_query.from_user.id,
+        keyboard = []
+        row = [InlineKeyboardButton((all_info_2[0][0]), callback_data='Вова')]
+        row_1 = [InlineKeyboardButton('<', callback_data='serg'),
+                 InlineKeyboardButton('>', callback_data='dima')]
+        keyboard.extend((row, row_1))
+        reply_markup = InlineKeyboardMarkup(keyboard)
+        bot.send_photo(chat_id=query.from_user.id,
+                       photo=all_info_2[0][1],
+                       caption='*Опыт работы:* {} \n'
+                               '*Рейтинг:* {}'.format(all_info_2[0][2], smiles[12]),
+                       parse_mode="Markdown",
+                       reply_markup=reply_markup)
+        user_data['service'] = query.data
+    elif service == 'dima':
+        keyboard = []
+        row = [InlineKeyboardButton((all_info_2[1][0]), callback_data='Дима')]
+        row_1 = [InlineKeyboardButton('<', callback_data='vova'),
+                 InlineKeyboardButton('>', callback_data='serg')]
+        keyboard.extend((row, row_1))
+        reply_markup = InlineKeyboardMarkup(keyboard)
+        bot.send_photo(chat_id=query.from_user.id,
+                       photo=all_info_2[1][1],
+                       caption='*Опыт работы:* {} \n'
+                               '*Рейтинг:* {}'.format(all_info_2[1][2], smiles[12]),
+                       parse_mode="Markdown",
+                       reply_markup=reply_markup)
+    elif service == 'serg':
+        keyboard = []
+        row = [InlineKeyboardButton((all_info_2[2][0]), callback_data='Сергей')]
+        row_1 = [InlineKeyboardButton('<', callback_data='dima'),
+                 InlineKeyboardButton('>', callback_data='vova')]
+        keyboard.extend((row, row_1))
+        reply_markup = InlineKeyboardMarkup(keyboard)
+        bot.send_photo(chat_id=query.from_user.id,
+                       photo=all_info_2[2][1],
+                       caption='*Опыт работы:* {} \n'
+                               '*Рейтинг:* {}'.format(all_info_2[2][2], smiles[12]),
+                       parse_mode="Markdown",
+                       reply_markup=reply_markup)
+    elif service == 'vova':
+        keyboard = []
+        row = [InlineKeyboardButton((all_info_2[0][0]), callback_data='Вова')]
+        row_1 = [InlineKeyboardButton('<', callback_data='serg'),
+                 InlineKeyboardButton('>', callback_data='dima')]
+        keyboard.extend((row, row_1))
+        reply_markup = InlineKeyboardMarkup(keyboard)
+        bot.send_photo(chat_id=query.from_user.id,
+                       photo=all_info_2[0][1],
+                       caption='*Опыт работы:* {} \n'
+                               '*Рейтинг:* {}'.format(all_info_2[0][2], smiles[12]),
+                       parse_mode="Markdown",
+                       reply_markup=reply_markup)
+    bot.delete_message(chat_id=query.from_user.id,
                        message_id=query.message.message_id)
-    user_data['service'] = query.data
     return SECOND
 
 
 def calendar(bot, update, user_data):
     """ Вызов инлайн клавиатуры с календарем """
+    print('lol')
 
     query = update.callback_query
     name = query.data
-    if name == 'Вова':
-        bot.delete_message(chat_id=query.from_user.id,
-                           message_id=query.message.message_id)
-        bot.send_message(text='Выберите дату: {}'.format(smiles[4]),
-                         chat_id=query.from_user.id,
-                         message_id=query.message.message_id,
-                         reply_markup=telegramcalendar.create_calendar_vova())
-    elif name == 'Дима':
-        bot.delete_message(chat_id=query.from_user.id,
-                           message_id=query.message.message_id)
-        bot.send_message(text='Выберите дату: {}'.format(smiles[4]),
-                         chat_id=query.from_user.id,
-                         message_id=query.message.message_id,
-                         reply_markup=telegramcalendar.create_calendar_dima())
-    elif name == 'Сергей':
-        bot.delete_message(chat_id=query.from_user.id,
-                           message_id=query.message.message_id)
-        bot.send_message(text='Выберите дату: {}'.format(smiles[4]),
-                         chat_id=query.from_user.id,
-                         message_id=query.message.message_id,
-                         reply_markup=telegramcalendar.create_calendar_serg())
+    if name == 'vova' or name == 'dima' or name == 'serg':
+        bot.edit_message_reply_markup(chat_id=query.message.chat_id,
+                                      message_id=query.message.message_id,
+                                      reply_markup=choose_master(bot, update, user_data))
     else:
         bot.delete_message(chat_id=query.from_user.id,
                            message_id=query.message.message_id)
         bot.send_message(text='Выберите дату: {}'.format(smiles[4]),
                          chat_id=query.from_user.id,
                          message_id=query.message.message_id,
-                         reply_markup=telegramcalendar.create_calendar())
+                         reply_markup=telegramcalendar.create_calendar(bot, update))
+
     user_data['name'] = query.data
     return THIRD
 
@@ -218,14 +243,7 @@ def time_check(bot, update, user_data):
     """ Вывод инлайн клавиатуры со временем """
 
     query = update.callback_query
-    if user_data['name'] == 'Вова':
-        selected, date = telegramcalendar.process_calendar_selection_vova(bot, update)
-    elif user_data['name'] == 'Дима':
-        selected, date = telegramcalendar.process_calendar_selection_dima(bot, update)
-    elif user_data['name'] == 'Сергей':
-        selected, date = telegramcalendar.process_calendar_selection_serg(bot, update)
-    else:
-        selected, date = telegramcalendar.process_calendar_selection(bot, update)
+    selected, date = telegramcalendar.process_calendar_selection(bot, update)
 
     sql = "SELECT * FROM time_to_barbers"
     cursor.execute(sql)
@@ -247,15 +265,25 @@ def time_check(bot, update, user_data):
         keyboard.append(row)
         row = [InlineKeyboardButton(i, callback_data=str(i)) for i in all_time[3:6]]
         keyboard.append(row)
-        row = [InlineKeyboardButton('Выбрать другой день', callback_data='Выбрать другой день')]
-        keyboard.append(row)
-
+        if user_data['name'] == 'Вова':
+            row = [InlineKeyboardButton('Выбрать другой день', callback_data='Выбрать другой день Вова')]
+            keyboard.append(row)
+        elif user_data['name'] == 'Дима':
+            row = [InlineKeyboardButton('Выбрать другой день', callback_data='Выбрать другой день Дима')]
+            keyboard.append(row)
+        elif user_data['name'] == 'Сергей':
+            row = [InlineKeyboardButton('Выбрать другой день', callback_data='Выбрать другой день Сергей')]
+            keyboard.append(row)
+        elif user_data['name'] == 'Тимур':
+            row = [InlineKeyboardButton('Выбрать другой день', callback_data='Выбрать другой день Тимур')]
+            keyboard.append(row)
         reply_markup = InlineKeyboardMarkup(keyboard)
-        bot.edit_message_text(text='Выберите время: {}'.format(smiles[6]),
-                              chat_id=update.callback_query.from_user.id,
+        bot.edit_message_text(text='Выберите время: {}'.format(smiles[7]),
+                              chat_id=query.from_user.id,
                               message_id=query.message.message_id,
                               reply_markup=reply_markup)
     user_data['date'] = date.strftime("%Y-%m-%d")
+    print(user_data)
     return FOURTH
 
 
@@ -265,41 +293,27 @@ def contact(bot, update, user_data):
     query = update.callback_query
     if query.data == "Нет записи":
         bot.answer_callback_query(callback_query_id=query.id)
-    elif query.data == 'Выбрать другой день' and user_data['name'] == 'Вова':
+    elif query.data == 'Выбрать другой день Вова' or\
+            query.data == 'Выбрать другой день Дима' or\
+            query.data == 'Выбрать другой день Сергей' or\
+            query.data == 'Выбрать другой день Тимур':
         bot.edit_message_text(text='Выберите дату: {} '.format(smiles[4]),
                               chat_id=query.message.chat_id,
                               message_id=query.message.message_id,
-                              reply_markup=telegramcalendar.create_calendar_vova())
-        return THIRD
-    elif query.data == 'Выбрать другой день' and user_data['name'] == 'Дима':
-        bot.edit_message_text(text='Выберите дату: {} '.format(smiles[4]),
-                              chat_id=query.message.chat_id,
-                              message_id=query.message.message_id,
-                              reply_markup=telegramcalendar.create_calendar_dima())
-        return THIRD
-    elif query.data == 'Выбрать другой день' and user_data['name'] == 'Сергей':
-        bot.edit_message_text(text='Выберите дату: {} '.format(smiles[4]),
-                              chat_id=query.message.chat_id,
-                              message_id=query.message.message_id,
-                              reply_markup=telegramcalendar.create_calendar_serg())
-        return THIRD
-    elif query.data == 'Выбрать другой день':
-        bot.edit_message_text(text='Выберите дату: {} '.format(smiles[4]),
-                              chat_id=query.message.chat_id,
-                              message_id=query.message.message_id,
-                              reply_markup=telegramcalendar.create_calendar())
+                              reply_markup=telegramcalendar.create_calendar(bot, update))
         return THIRD
     else:
         contact_button = KeyboardButton('Контактные данные {}'.format(smiles[11]), request_contact=True)
         my_keyboard = ReplyKeyboardMarkup([[contact_button]],
                                           resize_keyboard=True,
                                           one_time_keyboard=True)
-        bot.send_message(chat_id=update.callback_query.from_user.id,
+        bot.send_message(chat_id=query.from_user.id,
                          text="Отправьте Ваши контактные данные для уточнения заказа:",
                          reply_markup=my_keyboard)
-        bot.delete_message(chat_id=update.callback_query.from_user.id,
+        bot.delete_message(chat_id=query.from_user.id,
                            message_id=query.message.message_id)
         user_data['time'] = query.data
+        print(user_data)
 
 
 def get_contact(bot, update, user_data, job_queue):
@@ -418,39 +432,27 @@ def my_entry(bot, update, user_data):
 
         total_sum = sum(check_price[0:])
         keyboard = []
+        row = [InlineKeyboardButton((', '.join(entries[0:4])), callback_data='1')]
+        row_1 = [InlineKeyboardButton((', '.join(entries[4:8])), callback_data='2')]
+        row_2 = [InlineKeyboardButton((', '.join(entries[8:12])), callback_data='3')]
+        all_entries = [InlineKeyboardButton('Отменить все записи {}'.format(smiles[3]), callback_data='Отмена')]
+        main_menu = [InlineKeyboardButton('Вернуться в главное меню {}'.format(smiles[10]), callback_data='0')]
         if len(entries) == 4:
-            row = [InlineKeyboardButton((', '.join(entries[0:4])), callback_data='1')]
-            main_menu = [InlineKeyboardButton('Вернуться в главное меню {}'.format(smiles[10]), callback_data='0')]
             keyboard.extend((row, main_menu))
         elif len(entries) == 8:
-            row = [InlineKeyboardButton((', '.join(entries[0:4])), callback_data='1')]
-            row_1 = [InlineKeyboardButton((', '.join(entries[4:8])), callback_data='2')]
-            all_entries = [InlineKeyboardButton('Отменить все записи {}'.format(smiles[3]), callback_data='Отмена')]
-            main_menu = [InlineKeyboardButton('Вернуться в главное меню {}'.format(smiles[10]), callback_data='0')]
             keyboard.extend((row, row_1, all_entries, main_menu))
         elif len(entries) > 8:
-            row = [InlineKeyboardButton((', '.join(entries[0:4])), callback_data='1')]
-            row_1 = [InlineKeyboardButton((', '.join(entries[4:8])), callback_data='2')]
-            row_2 = [InlineKeyboardButton((', '.join(entries[8:12])), callback_data='3')]
-            all_entries = [InlineKeyboardButton('Отменить все записи {}'.format(smiles[3]), callback_data='Отмена')]
-            main_menu = [InlineKeyboardButton('Вернуться в главное меню {}'.format(smiles[10]), callback_data='0')]
             keyboard.extend((row, row_1, row_2, all_entries, main_menu))
         reply_markup = InlineKeyboardMarkup(keyboard)
+        info_text = 'Клиент: ' + user_data.get('first_name') + '\n'\
+                    + '\n' 'Итоговая сумма: ' + str(total_sum) + '\n'\
+                    + '\n' 'Ниже представлена краткая информация о ваших записях.' + '\n'\
+                    'Чтобы отменить запись -  просто нажмите на нее!'
         try:
-            update.message.reply_text('Клиент: ' + user_data.get('first_name') + '\n'
-                                      + '\n'
-                                      'Итоговая сумма: ' + str(total_sum) + '\n'
-                                      + '\n'
-                                      'Ниже представлена краткая информация о ваших записях.' + '\n'
-                                      'Чтобы отменить запись -  просто нажмите на нее!',
+            update.message.reply_text(info_text,
                                       reply_markup=reply_markup)
         except AttributeError:
-            bot.edit_message_text('Клиент: ' + user_data.get('first_name') + '\n'
-                                  + '\n'
-                                  'Итоговая сумма: ' + str(total_sum) + '\n'
-                                  + '\n'
-                                  'Ниже представлена краткая информация о ваших записях.' + '\n'
-                                  'Чтобы отменить запись -  просто нажмите на нее!',
+            bot.edit_message_text(info_text,
                                   chat_id=update.callback_query.message.chat_id,
                                   message_id=update.callback_query.message.message_id,
                                   reply_markup=reply_markup)
@@ -616,5 +618,3 @@ def main():
 
 if __name__ == '__main__':
     main()
-
-'''Сделать чтобы напоминания приходили за сутки (за час)'''
